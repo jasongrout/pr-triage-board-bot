@@ -73,9 +73,9 @@ where:
 
 This should run for a bit and get you your project output!
 
-## Run as a GitHub Workflow
+## Run as a GitHub Action
 
-You can also run this bot using [GitHub workflows](https://docs.github.com/en/actions/concepts/workflows-and-actions/workflows). Create a workflow file like the following to run the bot every hour and to be able to manually trigger a run:
+You can run this bot using [GitHub Actions](https://docs.github.com/en/actions). Create a workflow file like the following to run the bot every hour and to be able to manually trigger a run:
 
 ```yaml
 name: PR Triage Bot
@@ -87,18 +87,21 @@ on:
 
 jobs:
   pr-triage:
-    uses: yuvipanda/pr-triage-board-bot/.github/workflows/reusable-pr-triage.yml@main
-    with:
-      organization: 'your-org-name'
-      project-number: '1'
-      gh-app-id: '12345'
-      gh-installation-id: '67890'
-      repositories: 'repo1,repo2'  # Optional: limit to specific repos
-    secrets:
-      gh-app-private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run PR Triage Bot
+        uses: jasongrout/pr-triage-board-bot@v1.0.0
+        with:
+          organization: 'your-org-name'
+          project-number: '1'
+          gh-app-id: '12345'
+          gh-installation-id: '67890'
+          repositories: 'repo1,repo2'  # Optional: limit to specific repos
+        env:
+          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
 ```
 
-### Workflow Inputs
+### Action Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
@@ -109,8 +112,8 @@ jobs:
 | `repositories` | Comma-separated list of repository names to limit querying to (optional) | No | |
 | `node-version` | Node.js version to use | No | `23.x` |
 
-### Required Secrets
+### Required Environment Variables
 
-| Secret | Description | Required |
-|--------|-------------|----------|
-| `gh-app-private-key` | GitHub App private key (PEM format) for authentication | Yes |
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GH_APP_PRIVATE_KEY` | GitHub App private key (PEM format) for authentication | Yes |

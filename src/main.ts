@@ -106,11 +106,11 @@ async function main(organization: string, projectNumber: number, octokit: Pagina
         // Process each field, only updating if value has changed
         for (const [fieldName, fieldConfig] of Object.entries(REQUIRED_FIELDS)) {
             // A null newValue corresponds to undefined (cleared) currentValue
-            const newValue = (await fieldConfig.getValue(octokit, pr)) ?? undefined;
+            const newValue = (await fieldConfig.getValue(octokit, pr));
             const currentValue = existingItem?.fieldValues.get(fieldName);
             
-            // Compare values - handle different types appropriately
-            if ((newValue instanceof Date && currentValue instanceof Date) ? currentValue.getTime() === newValue.getTime() : currentValue === newValue) {
+            // Compare values - handle different types appropriately. Null newValues correspond to currentValues of undefined.
+            if ((newValue instanceof Date && currentValue instanceof Date) ? currentValue.getTime() === newValue.getTime() : currentValue === (newValue ?? undefined)) {
                 skippedCount++;
             } else {
                 console.log(`[${count} / ${openPRs.length}] Setting ${fieldName} to ${newValue} for ${pr.url}`);
